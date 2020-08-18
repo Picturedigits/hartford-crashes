@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
 
-  <title>Hartford Crashes</title>
-  <meta name="description" content="The HTML5 Herald">
-  <meta name="author" content="SitePoint">
+  <title>Hartford Crashes </title>
+  <meta name="description" content="Interactive heatmap of car crashes in Hartford between 2015 and 2020, with crash data from UCONN Crash Repository.">
+  <meta name="author" content="Picturedigits">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css">
@@ -21,9 +21,13 @@
 
 <body class="helvetica">
 
+  <a href="https://www.picturedigits.com" class="w4 fixed bottom-0 left-0 mb0 ml2 dim" style="z-index: 999">
+    <img src="./Picturedigits.png" alt="Picturedigits" class="o-80">
+  </a>
+
   <div id="map" class="vh-100 vw-100 bg-yellow"></div>
 
-  <div id="legend" class="bg-white fixed top-0 left-0 pa3 mt2 ml2 br1" style="z-index: 999">
+  <div id="legend" class="bg-white fixed top-0 left-0 pa3 mt2 ml2 br1 o-90" style="z-index: 999; width: 450px">
     <h1 class="f3 mt0">Hartford Crashes</h1>
 
     <p class="measure">
@@ -35,15 +39,21 @@
     <form class="ph2">
       <input type="text" class="js-range-slider" name="dates" value="" />
 
+      <p class="f6 measure">
+        Between <span id="textFrom"></span> and <span id="textTo"></span>, there were <span id="textTotal"></span>
+        crashes in Hartford. Of these, <span id="textPed"></span> involved pedestrians and <span id="textCyc"></span>
+        involved bicyclists.
+      </span>
+
       <div class="mt3 f6">
         <label>
-          <input type="checkbox" id="pedestrians"> Crashes involving <b>pedestrians</b>
+          <input type="checkbox" id="pedestrians"> Show crashes involving <b>pedestrians</b>
         </label>
 
         <br>
 
         <label>
-          <input type="checkbox" id="cyclists"> Crashes involving <b>cyclists</b>
+          <input type="checkbox" id="cyclists"> Show crashes involving <b>cyclists</b>
         </label>
 
         <br><br>
@@ -69,7 +79,7 @@
 
     var map = L.map('map', {
       zoomControl: false,
-      center: [41.76, -72.67],
+      center: [41.763, -72.675],
       zoom: 15
     })
 
@@ -113,12 +123,31 @@
         var cyc = $('#cyclists').prop('checked')
         var intensity = $('#intensity').val()
 
-        // Add only points from timeframe and with filters
+        // In the sentence below the time range, set dates
+        $('#textFrom').html(tsToDate(from * 1000))
+        $('#textTo').html(tsToDate(to * 1000))
+
+        // All crashes between set dates
+        var crashes = data.filter(function(point) {
+            return point.d >= from && point.d <= to
+        })
+
+        // How many total crashes in the timeframe
+        $('#textTotal').html( crashes.length.toLocaleString() )
+
+        // How many crashes involving pedestrians?
+        $('#textPed').html( crashes.filter(function(point) {
+          return point.p === 1
+        }).length || 'none' )
+
+        // How many crashes involving pedestrians?
+        $('#textCyc').html( crashes.filter(function(point) {
+          return point.c === 1
+        }).length || 'none')
+
         heat.setLatLngs(
-          data.filter(function(point) {
-            return point.d >= from
-              && point.d <= to
-              && (cyc ? point.c === 1 : true)
+          crashes.filter(function(point) {
+            return (cyc ? point.c === 1 : true)
               && (ped ? point.p === 1 : true)
           }).map(function(point) {
             return [point.x, point.y, intensity / 3.0]
