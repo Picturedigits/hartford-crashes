@@ -16,16 +16,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.sync@0.2.4/L.Map.Sync.js"></script>
         
 </head>
 
 <body class="helvetica">
 
   <a href="https://www.picturedigits.com" class="w4 fixed bottom-0 left-0 mb0 ml2 dim" style="z-index: 999">
-    <img src="./Picturedigits.png" alt="Picturedigits" class="o-80">
+    <img src="./img/picturedigits.png" alt="Picturedigits" class="o-80">
   </a>
 
-  <div id="map" class="vh-100 vw-100 bg-yellow"></div>
+  <div id="map" class="vh-100 vw-100 bg-near-white"></div>
 
   <div id="legend" class="bg-white fixed top-0 left-0 pa3 mt2 ml2 br1 o-90" style="z-index: 999; width: 450px">
     <h1 class="f3 mt0">Hartford Crashes</h1>
@@ -45,26 +46,46 @@
         involved bicyclists.
       </span>
 
-      <div class="mt3 f6">
+      <div id="filters" class="mt3 f6">
+
+        <h5 class="f5 mb1 mt3">Crash Participants</h5>
         <label>
-          <input type="checkbox" id="pedestrians"> Show crashes involving <b>pedestrians</b>
+          <input type="checkbox" id="vehiclesOnly"> Vehicles only
         </label>
 
-        <br>
-
         <label>
-          <input type="checkbox" id="cyclists"> Show crashes involving <b>cyclists</b>
+          <input type="checkbox" id="pedestrians" class="ml2"> Pedestrians
         </label>
 
-        <br><br>
+        <label>
+          <input type="checkbox" id="cyclists" class="ml2"> Cyclists
+        </label>
 
+        <h5 class="f5 mb1 mt3">Injuries</h5>
+        <label>
+          <input type="checkbox" id="propertyDamage"> Property damage
+        </label>
+        <label>
+          <input type="checkbox" id="injury" class="ml2"> Injury
+        </label>
+        <label>
+          <input type="checkbox" id="fatal" class="ml2"> Fatal
+        </label>
+
+        <h5 class="f5 mb1 mt3">Roads</h5>
+        <label>
+          <input type="checkbox" id="local"> Local
+        </label>
+        <label>
+          <input type="checkbox" id="highways" class="ml2"> Highways
+        </label>
+
+
+        <h5 class="f5 mb1 mt3">Map Appearance</h5>
         <label>
           <input type="checkbox" id="labels" checked="checked"> Street labels
         </label>
-        
-        <br>
-
-        <label>
+        <label class="ml4">
           Intensity <input type="range" value="10" min="1" max="30" id="intensity" class="v-mid mr2">
         </label>
 
@@ -77,10 +98,13 @@
 
   <script>
 
+    var tsCoef = 100000.0 // original timestamp needs to be multiplied by this to work in JS
+
     var map = L.map('map', {
       zoomControl: false,
       center: [41.763, -72.675],
-      zoom: 15
+      zoom: 15,
+      minZoom: 12,
     })
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
@@ -93,7 +117,7 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19,
-      pane: 'shadowPane'
+      pane: 'shadowPane'  // always display on top
     }).addTo(map)
 
     function dateToTS (date) {
@@ -110,26 +134,24 @@
       })
     }
 
-    var initFrom = dateToTS( new Date(2020, 0, 1) ) / 1000
-    var initTo = dateToTS( new Date(2020, 6, 31) ) / 1000
+    var initFrom = dateToTS( new Date(2020, 0, 1) ) / tsCoef
+    var initTo = dateToTS( new Date(2020, 6, 31) ) / tsCoef
 
 
     $.getJSON('data/crashes.json', function(data) {
+
       var heat = L.heatLayer( [], { radius: 20 } ).addTo(map)
+      var individualPoints = L.layerGroup().addTo(map)
 
       var updateHeatLayer = function(from, to) {
 
-        var ped = $('#pedestrians').prop('checked')
-        var cyc = $('#cyclists').prop('checked')
-        var intensity = $('#intensity').val()
-
         // In the sentence below the time range, set dates
-        $('#textFrom').html(tsToDate(from * 1000))
-        $('#textTo').html(tsToDate(to * 1000))
+        $('#textFrom').html(tsToDate(from * tsCoef))
+        $('#textTo').html(tsToDate(to * tsCoef))
 
         // All crashes between set dates
         var crashes = data.filter(function(point) {
-            return point.d >= from && point.d <= to
+          return point.d >= from && point.d <= to
         })
 
         // How many total crashes in the timeframe
@@ -140,19 +162,71 @@
           return point.p === 1
         }).length || 'none' )
 
-        // How many crashes involving pedestrians?
+        // How many crashes involving cyclists?
         $('#textCyc').html( crashes.filter(function(point) {
           return point.c === 1
         }).length || 'none')
 
-        heat.setLatLngs(
-          crashes.filter(function(point) {
-            return (cyc ? point.c === 1 : true)
-              && (ped ? point.p === 1 : true)
-          }).map(function(point) {
-            return [point.x, point.y, intensity / 3.0]
+        var crashesFiltered = crashes.filter(function(point) {
+          return (( $('#local').prop('checked') ? point.r === 4 : false)
+            || ( $('#highways').prop('checked') ? point.r < 4 : false))
+
+            && (( $('#vehiclesOnly').prop('checked') ? (point.c === 0 && point.p === 0) : false)
+            || ( $('#cyclists').prop('checked') ? point.c === 1 : false)
+            || ( $('#pedestrians').prop('checked') ? point.p === 1 : false))
+
+            && (( $('#propertyDamage').prop('checked') ? point.s === 'O' : false)
+            || ( $('#injury').prop('checked') ? point.s === 'A' : false)
+            || ( $('#fatal').prop('checked') ? point.s === 'K' : false))
+        })
+
+        if (crashesFiltered.length === 0) {
+          alert('There are no crashes that satisfy your filtering criteria.')
+        }
+
+        // Despite zoom, clear individual points
+        individualPoints.clearLayers()
+
+        // Update the heatlayer
+        var intensity = $('#intensity').val()
+
+        //alert(map.getZoom())
+
+        if ( map.getZoom() >= 18 ) {
+          heat.setLatLngs([])
+
+          crashesFiltered.map(function(crash) {
+
+            var diagramUrl = 'https://www.ctcrash.uconn.edu/MMUCCDiagram?id=' + crash.id + '&asImage=true'
+
+            var circle = L.circleMarker([crash.x, crash.y], {
+              radius: 5,
+              color: '#002147',
+              fillColor: '#002147',
+              fillOpacity: 0.8,
+              opacity: 0.8,
+              weight: 0,
+            }).bindPopup(
+              '<b>Crash ID ' + crash.id + '</b><br>'
+                + tsToDate(crash.d * tsCoef) + ' at ' + crash.t
+                + '<a href="' + diagramUrl + '" target="_blank"><img src="' + diagramUrl + '" alt="Crash diagram"></a>'
+                + '<br>Severity: ' + (crash.s === 'K' ? 'Fatal crash' : crash.s === 'A' ? 'Injury of any type' : 'Property damage only'),
+              {minWidth: 300}
+            )
+            
+            individualPoints.addLayer(circle)
           })
-        )
+
+        }
+
+        else {
+          heat.setLatLngs(
+            crashesFiltered.map(function(point) {
+              return [point.x, point.y, intensity / 3.0]
+            })
+          )
+        }
+
 
       }
 
@@ -171,19 +245,21 @@
 
         onChange: function(sliderData) {
 
-          var from = sliderData.from / 1000;
-          var to = sliderData.to / 1000;
+          var from = sliderData.from / tsCoef;
+          var to = sliderData.to / tsCoef;
 
           updateHeatLayer(from, to)
         }
       });
 
-      $('#intensity, #pedestrians, #cyclists').change(function(e) {
+
+      $('#filters input').not('#labels').change(function(e) {
         updateHeatLayer(
-          slider[0].value.split(';')[0] / 1000,
-          slider[0].value.split(';')[1] / 1000
+          slider[0].value.split(';')[0] / tsCoef,
+          slider[0].value.split(';')[1] / tsCoef
         )
       })
+
 
       $('#labels').change(function(e) {
         if ( $('#labels').prop('checked') ) {
@@ -193,9 +269,15 @@
         }
       })
 
-      // For the first time, load data
-      $('#labels').prop('checked', 'checked')
-      $('#cyclists, #pedestrians').prop('checked', false)
+      map.on('zoomend', function() {
+        updateHeatLayer(
+          slider[0].value.split(';')[0] / tsCoef,
+          slider[0].value.split(';')[1] / tsCoef
+        )
+      })
+
+      // Set default properties
+      $('#filters input').prop('checked', 'checked')
       $('#intensity').val(5)
       updateHeatLayer( initFrom, initTo )
 
@@ -205,11 +287,11 @@
 
   <style>
     .irs-bar, .irs-handle i, .irs-single, .irs-from, .irs-to {
-      background-color: #333 !important;
+      background-color: #111 !important;
     }
 
     .irs-single::before, .irs-from::before, .irs-to::before {
-      border-top-color: #333 !important;
+      border-top-color: #111 !important;
     }
   </style>
 
