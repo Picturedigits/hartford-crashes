@@ -176,8 +176,8 @@
         })
 
         var crashesFiltered = crashes.filter(function(point) {
-          return (( $('#local').prop('checked') ? point.r === 4 : false)
-            || ( $('#highways').prop('checked') ? point.r < 4 : false))
+          return (( $('#local').prop('checked') ? (point.r >= 3 || point.r === 0) : false)
+            || ( $('#highways').prop('checked') ? (point.r === 1 || point.r === 2) : false))
 
             && (( $('#vehiclesOnly').prop('checked') ? (point.c === 0 && point.p === 0) : false)
             || ( $('#cyclists').prop('checked') ? point.c === 1 : false)
