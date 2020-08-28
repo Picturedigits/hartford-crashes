@@ -100,6 +100,7 @@
       center: [41.763, -72.675],
       zoom: 15,
       minZoom: 12,
+      attributionControl: false
     })
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
@@ -291,6 +292,10 @@
       updateHeatLayer( initFrom, initTo )
 
     })
+
+    L.control.attribution({
+      prefix: 'View <a href="https://github.com/Picturedigits/hartford-crashes">code on GitHub</a> by Picturedigits'
+    }).addTo(map)
 
   </script>
 
