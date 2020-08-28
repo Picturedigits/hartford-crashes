@@ -32,19 +32,16 @@
     <h1 class="f3 mt0">Hartford Crashes</h1>
 
     <p class="measure">
-      This heatmap shows locations of car crashes in Hartford.
-      Use the slider to change the time frame, and checkboxes
-      to only show crashes with pedestrians or cyclists.
+      This is a heatmap of car crashes in Hartford.
+      Use the slider to change the time frame.
+      Zoom in to hotspots to see individual crash location
+      data.
     </p>
 
     <form class="ph2">
       <input type="text" class="js-range-slider" name="dates" value="" />
 
-      <p class="f6 measure">
-        Between <span id="textFrom"></span> and <span id="textTo"></span>, there were <span id="textTotal"></span>
-        crashes in Hartford. Of these, <span id="textPed"></span> involved pedestrians and <span id="textCyc"></span>
-        involved bicyclists.
-      </span>
+      <p class="f6 measure" id="statsText"></p>
 
       <div id="filters" class="mt3 f6">
 
@@ -98,8 +95,6 @@
 
   <script>
 
-    var tsCoef = 100000.0 // original timestamp needs to be multiplied by this to work in JS
-
     var map = L.map('map', {
       zoomControl: false,
       center: [41.763, -72.675],
@@ -120,7 +115,7 @@
       pane: 'shadowPane'  // always display on top
     }).addTo(map)
 
-    function dateToTS (date) {
+    function dateToTS(date) {
       return date.valueOf()
     }
     
@@ -134,8 +129,8 @@
       })
     }
 
-    var initFrom = dateToTS( new Date(2020, 0, 1) ) / tsCoef
-    var initTo = dateToTS( new Date(2020, 6, 31) ) / tsCoef
+    var initFrom = dateToTS( new Date(2020, 0, 1) )
+    var initTo = dateToTS( new Date(2020, 6, 31) )
 
 
     $.getJSON('data/crashes.json', function(data) {
@@ -143,29 +138,42 @@
       var heat = L.heatLayer( [], { radius: 20 } ).addTo(map)
       var individualPoints = L.layerGroup().addTo(map)
 
+      var tsCoef = 100000.0 // original timestamp needs to be multiplied by this to work in JS
+
+      var updateStatsText = function(formattedFrom, formattedTo, crashesTotal, crashesPed, crashesCyc, filtered) {
+        var text = formattedFrom === formattedTo
+          ? ('On ' + formattedFrom)
+          : ('From ' + formattedFrom + ' to ' + formattedTo)
+
+        text += ', there ' + (crashesTotal === 1 ? 'was ' : 'were ') + (crashesTotal === 0 ? 'no' : crashesTotal.toLocaleString())
+        text += ' car crash' + (crashesTotal === 1 ? '' : 'es') + ' in Hartford.'
+
+        if (crashesTotal > 1) {
+          text += ' Of those, ' + (crashesPed > 0 ? crashesPed.toLocaleString() : ' none')
+          text += ' involved a pedestrian, and '
+          text += (crashesCyc > 0 ? crashesCyc.toLocaleString() : ' none')
+          text += ' involved a cyclist.'
+        }
+
+        text += ' <span class="i ' + (filtered ? '' : 'red') + '">'
+          + (filtered ? filtered.toLocaleString() : 'No ') + ' crash'
+          + (filtered === 1 ? '' : 'es') + ' satisf' + (filtered === 1 ? 'ies' : 'y')
+          + ' your filtering criteria.</span>'
+
+        $('#statsText').html(text)
+
+      }
+
+      // Given `from` and `to` timestamps, updates the heatmap layer.
       var updateHeatLayer = function(from, to) {
 
-        // In the sentence below the time range, set dates
-        $('#textFrom').html(tsToDate(from * tsCoef))
-        $('#textTo').html(tsToDate(to * tsCoef))
+        from = dateToTS( new Date(from * 1).setHours(0,0,0,0)) / tsCoef
+        to = dateToTS( new Date(to * 1).setHours(23,59,59,0)) / tsCoef
 
         // All crashes between set dates
         var crashes = data.filter(function(point) {
           return point.d >= from && point.d <= to
         })
-
-        // How many total crashes in the timeframe
-        $('#textTotal').html( crashes.length.toLocaleString() )
-
-        // How many crashes involving pedestrians?
-        $('#textPed').html( crashes.filter(function(point) {
-          return point.p === 1
-        }).length || 'none' )
-
-        // How many crashes involving cyclists?
-        $('#textCyc').html( crashes.filter(function(point) {
-          return point.c === 1
-        }).length || 'none')
 
         var crashesFiltered = crashes.filter(function(point) {
           return (( $('#local').prop('checked') ? point.r === 4 : false)
@@ -180,9 +188,14 @@
             || ( $('#fatal').prop('checked') ? point.s === 'K' : false))
         })
 
-        if (crashesFiltered.length === 0) {
-          alert('There are no crashes that satisfy your filtering criteria.')
-        }
+        updateStatsText(
+          tsToDate(from * 100000),  // Date from
+          tsToDate(to * 100000),  // Date to
+          crashes.length, // Total crashes
+          crashes.filter(function(p) {return p.p === 1}).length,  // Ped crashes
+          crashes.filter(function(p) {return p.c === 1}).length,  // Cyc crashes
+          crashesFiltered.length
+        )
 
         // Despite zoom, clear individual points
         individualPoints.clearLayers()
@@ -190,13 +203,12 @@
         // Update the heatlayer
         var intensity = $('#intensity').val()
 
-        //alert(map.getZoom())
-
+        // If zoomed in all the way, show points instead of a heatmap
         if ( map.getZoom() >= 18 ) {
+
           heat.setLatLngs([])
 
           crashesFiltered.map(function(crash) {
-
             var diagramUrl = 'https://www.ctcrash.uconn.edu/MMUCCDiagram?id=' + crash.id + '&asImage=true'
 
             var circle = L.circleMarker([crash.x, crash.y], {
@@ -219,6 +231,7 @@
 
         }
 
+        // Zoomed out enough for a heatmap
         else {
           heat.setLatLngs(
             crashesFiltered.map(function(point) {
@@ -244,19 +257,15 @@
         grid_num: 4,
 
         onChange: function(sliderData) {
-
-          var from = sliderData.from / tsCoef;
-          var to = sliderData.to / tsCoef;
-
-          updateHeatLayer(from, to)
+          updateHeatLayer(sliderData.from, sliderData.to)
         }
       });
 
 
       $('#filters input').not('#labels').change(function(e) {
         updateHeatLayer(
-          slider[0].value.split(';')[0] / tsCoef,
-          slider[0].value.split(';')[1] / tsCoef
+          slider[0].value.split(';')[0],
+          slider[0].value.split(';')[1]
         )
       })
 
@@ -271,8 +280,8 @@
 
       map.on('zoomend', function() {
         updateHeatLayer(
-          slider[0].value.split(';')[0] / tsCoef,
-          slider[0].value.split(';')[1] / tsCoef
+          slider[0].value.split(';')[0],
+          slider[0].value.split(';')[1]
         )
       })
 
