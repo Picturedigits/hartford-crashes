@@ -3,10 +3,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Hartford Crashes </title>
+
   <meta name="description" content="Interactive heatmap of car crashes in Hartford between 2015 and 2020, with crash data from UCONN Crash Repository.">
   <meta name="author" content="Picturedigits">
+
+  <link rel="icon" type="image/png" href="./favicon.png">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css">
@@ -133,7 +137,7 @@
     }
 
     var initFrom = dateToTS( new Date(2020, 0, 1) )
-    var initTo = dateToTS( new Date(2020, 6, 31) )
+    var initTo = dateToTS( new Date(2020, 5, 30) )
 
 
     $.getJSON('data/crashes.json', function(data) {
@@ -250,10 +254,10 @@
         type: 'double',
 
         min: dateToTS(new Date(2015, 0, 1)),
-        max: dateToTS(new Date(2020, 6, 31)),
+        max: dateToTS(new Date(2020, 5, 30)),
 
         from: dateToTS(new Date(2020, 0, 1)),
-        to: dateToTS(new Date(2020, 6, 31)),
+        to: dateToTS(new Date(2020, 5, 30)),
         
         prettify: tsToDate,
         grid: true,
