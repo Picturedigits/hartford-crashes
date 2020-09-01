@@ -2,7 +2,7 @@
 
 Interactive heatmap of car crashes in Hartford between 2015 and 2020.
 
-![Heatmap screenshot](screenshot.png)
+![Heatmap screenshot](./img/screenshot.png)
 
 ## Data
 
