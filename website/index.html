@@ -26,9 +26,13 @@
 
 <body class="helvetica">
 
-  <a href="https://www.picturedigits.com" class="w4 fixed bottom-0 left-0 mb0 ml2 dim" style="z-index: 999">
-    <img src="./img/picturedigits.png" alt="Picturedigits" class="o-80">
-  </a>
+  <div class="fixed bottom-0 left-0 mb1 ml2" style="z-index: 999">
+    <a href="https://www.ctprf.org/programs_services/transport-hartford/" class="dim">
+      <img src="./img/transporthartford.png" alt="Transport Hartford" class="o-100 h2"></a>
+    <a href="https://www.picturedigits.com" class="dim ml1">
+      <img src="./img/picturedigits.png" alt="Picturedigits" class="o-70 w4"></a>
+  </div>
+
 
   <div id="map" class="vh-100 vw-100 bg-near-white"></div>
 
@@ -140,7 +144,7 @@
     var initTo = dateToTS( new Date(2020, 5, 30) )
 
 
-    $.getJSON('data/crashes.json', function(data) {
+    $.getJSON('./crashes.json', function(data) {
 
       var heat = L.heatLayer( [], { radius: 20 } ).addTo(map)
       var individualPoints = L.layerGroup().addTo(map)
@@ -300,7 +304,8 @@
     })
 
     L.control.attribution({
-      prefix: 'View <a href="https://github.com/Picturedigits/hartford-crashes">code on GitHub</a> by Picturedigits'
+      prefix: 'View <a href="https://github.com/Picturedigits/hartford-crashes">code on GitHub</a> \
+        by Picturedigits for <a href="https://www.ctprf.org/programs_services/transport-hartford/" target="_blank">TransportHartford</a>'
     }).addTo(map)
 
   </script>
