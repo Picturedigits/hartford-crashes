@@ -19,8 +19,9 @@ as one export, and 2019-2020 as another).
 
 ## Modify map's appearance
 
-This map is fully front-end, and loads data once from the CSV file using PapaParse data library.
-Modify `index.html` to set custom map title, initial coordinates, date ranges, and anything else really.
+This map is fully front-end, and loads data once from the CSV file using PapaParse JS library. You
+can change it to fetch the JSON file using `$.getJSON()` function of jQuery, although it is slightly
+heavier than the CSV. Modify `index.html` to set custom map title, initial coordinates, date ranges, and anything else really.
 
 ## I still have questions
 
