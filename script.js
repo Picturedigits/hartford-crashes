@@ -131,10 +131,10 @@ Papa.parse('./data/crashes.csv', {
                         opacity: 0.8,
                         weight: 0,
                     }).bindPopup(
-                        '<b>Crash ID ' + crash.id + '</b><br>'
+                        '<strong>Crash ID ' + crash.id + '</strong><br />'
                         + tsToDate(crash.d * tsCoef) + ' at ' + crash.t
-                        + '<a href="' + diagramUrl + '" target="_blank"><img src="' + diagramUrl + '" alt="Crash diagram"></a>'
-                        + '<br>Severity: ' + (crash.s === 'K' ? 'Fatal crash' : crash.s === 'A' ? 'Injury of any type' : 'Property damage only'),
+                        + '<a href="' + diagramUrl + '" target="_blank"><img src="' + diagramUrl + '" alt="Crash diagram" /></a>'
+                        + '<br />Severity: ' + (crash.s === 'K' ? 'Fatal crash' : crash.s === 'A' ? 'Injury of any type' : 'Property damage only'),
                         { minWidth: 300 }
                     )
 

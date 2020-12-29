@@ -13,24 +13,27 @@
 
   <link rel="icon" type="image/png" href="./img/favicon.png" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" />
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css" integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css" integrity="sha512-NWCafukXClS6fKch6bSMl/WvPzZrD1OGMf1oMAnFYXSSKZ7hgeswls+r4SdK4bFJauVwmvFf7HlMwji2TsjROA==" crossorigin="anonymous" />
   <link rel="stylesheet" href="./style.css" />
 
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/leaflet.sync@0.2.4/L.Map.Sync.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" integrity="sha512-rKFvwjvE4liWPlFnvH4ZhRDfNZ9FOpdkD/BU5gAIA3VS3vOQrQ5BjKgbO3kxebKhHdHcNUHLqxQYSoxee9UwgA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js" integrity="sha512-KhIBJeCI4oTEeqOmRi2gDJ7m+JARImhUYgXWiOTIp9qqySpFUAJs09erGKem4E5IPuxxSTjavuurvBitBmwE0w==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js" integrity="sha512-kZsqvmw94Y8hyhwtWZJvDtobwQ9pLhF1DuIvcqSuracbRn6WJs1Ih+04fpH/8d1CFKysp7XA1tR0Aa2jKLTQUg==" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.sync@0.2.4/L.Map.Sync.min.js"></script>
 
 </head>
 
 <body class="helvetica">
 
-  <div class="fixed bottom-0 left-0 mb1 ml2" style="z-index: 999">
+  <div class="fixed bottom-0 left-0 mb1 ml2 top-z-index">
     <a href="https://www.ctprf.org/programs_services/transport-hartford/" class="dim">
       <img src="./img/transporthartford.png" alt="Transport Hartford" class="o-100 h2" /></a>
     <a href="https://www.picturedigits.com" class="dim ml1">
@@ -40,7 +43,7 @@
 
   <div id="map" class="vh-100 vw-100 bg-near-white"></div>
 
-  <div id="legend" class="bg-white fixed top-0 left-0 pa3 mt2 ml2 br1 o-90" style="z-index: 999; width: 450px">
+  <div id="legend" class="bg-white fixed top-0 left-0 pa3 mt2 ml2 br1 o-90 top-z-index">
     <h1 class="f3 mt0">Hartford Crashes</h1>
 
     <p class="measure">
@@ -50,13 +53,15 @@
     </p>
 
     <form class="ph2">
-      <input type="text" class="js-range-slider" name="dates" value="" />
+      <label>
+        <input type="text" class="js-range-slider" name="dates" value="" />
+      </label>
 
       <p class="f6 measure" id="statsText"></p>
 
       <div id="filters" class="mt3 f6">
 
-        <h5 class="f5 mb1 mt3">Crash Participants</h5>
+        <h2 class="f5 mb1 mt3">Crash Participants</h5>
         <label>
           <input type="checkbox" id="vehiclesOnly" /> Vehicles only
         </label>
@@ -69,7 +74,7 @@
           <input type="checkbox" id="cyclists" class="ml2" /> Cyclists
         </label>
 
-        <h5 class="f5 mb1 mt3">Injuries</h5>
+        <h2 class="f5 mb1 mt3">Injuries</h5>
         <label>
           <input type="checkbox" id="propertyDamage" /> Property damage
         </label>
@@ -80,7 +85,7 @@
           <input type="checkbox" id="fatal" class="ml2" /> Fatal
         </label>
 
-        <h5 class="f5 mb1 mt3">Roads</h5>
+        <h2 class="f5 mb1 mt3">Roads</h5>
         <label>
           <input type="checkbox" id="local" /> Local
         </label>
@@ -89,7 +94,7 @@
         </label>
 
 
-        <h5 class="f5 mb1 mt3">Map Appearance</h5>
+        <h2 class="f5 mb1 mt3">Map Appearance</h5>
         <label>
           <input type="checkbox" id="labels" checked="checked" /> Street labels
         </label>

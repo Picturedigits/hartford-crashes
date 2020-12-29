@@ -19,3 +19,11 @@
 .irs-to::before {
     border-top-color: #111 !important;
 }
+
+.top-z-index {
+    z-index: 999;
+}
+
+#legend {
+    width: 450px;
+}
