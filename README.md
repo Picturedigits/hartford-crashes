@@ -1,7 +1,7 @@
 # Hartford Crashes
 
 Interactive heatmap of car crashes in Hartford between 2015 and 2020 which
-displays pre-processed data from [UCONN Crash Data Repository](https://www.ctcrash.uconn.edu/).
+displays pre-processed data from [UConn Crash Data Repository](https://www.ctcrash.uconn.edu/).
 It can be adapted for other towns in Connecticut, or other states that have similar data.
 
 ![Heatmap gif](./img/demo.gif)
@@ -21,7 +21,7 @@ as one export, and 2019-2020 as another).
 
 This map is fully front-end, and loads data once from the CSV file using PapaParse JS library. You
 can change it to fetch the JSON file using `$.getJSON()` function of jQuery, although it is slightly
-heavier than the CSV. Modify `index.html` to set custom map title, initial coordinates, date ranges, and anything else really.
+heavier than the CSV. Modify `index.html` and/or `script.js` to set custom map title, initial coordinates, date ranges, and anything else really.
 
 ## I still have questions
 

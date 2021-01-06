@@ -1,43 +1,49 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Hartford Crashes</title>
 
-  <meta name="description" content="Interactive heatmap of car crashes in Hartford between 2015 and 2020.">
-  <meta name="author" content="Picturedigits">
+  <meta name="description" content="Interactive heatmap of car crashes in Hartford between 2015 and 2020." />
+  <meta name="author" content="Picturedigits" />
 
-  <link rel="icon" type="image/png" href="./img/favicon.png">
+  <link rel="icon" type="image/png" href="./img/favicon.png" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
 
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/leaflet.sync@0.2.4/L.Map.Sync.js"></script>
-        
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css" integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css" integrity="sha512-NWCafukXClS6fKch6bSMl/WvPzZrD1OGMf1oMAnFYXSSKZ7hgeswls+r4SdK4bFJauVwmvFf7HlMwji2TsjROA==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="./style.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" integrity="sha512-rKFvwjvE4liWPlFnvH4ZhRDfNZ9FOpdkD/BU5gAIA3VS3vOQrQ5BjKgbO3kxebKhHdHcNUHLqxQYSoxee9UwgA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js" integrity="sha512-KhIBJeCI4oTEeqOmRi2gDJ7m+JARImhUYgXWiOTIp9qqySpFUAJs09erGKem4E5IPuxxSTjavuurvBitBmwE0w==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js" integrity="sha512-kZsqvmw94Y8hyhwtWZJvDtobwQ9pLhF1DuIvcqSuracbRn6WJs1Ih+04fpH/8d1CFKysp7XA1tR0Aa2jKLTQUg==" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.sync@0.2.4/L.Map.Sync.min.js"></script>
+
 </head>
 
 <body class="helvetica">
 
-  <div class="fixed bottom-0 left-0 mb1 ml2" style="z-index: 999">
+  <div class="fixed bottom-0 left-0 mb1 ml2 top-z-index">
     <a href="https://www.ctprf.org/programs_services/transport-hartford/" class="dim">
-      <img src="./img/transporthartford.png" alt="Transport Hartford" class="o-100 h2"></a>
+      <img src="./img/transporthartford.png" alt="Transport Hartford" class="o-100 h2" /></a>
     <a href="https://www.picturedigits.com" class="dim ml1">
-      <img src="./img/picturedigits.png" alt="Picturedigits" class="o-70 w4"></a>
+      <img src="./img/picturedigits.png" alt="Picturedigits" class="o-70 w4" /></a>
   </div>
 
 
   <div id="map" class="vh-100 vw-100 bg-near-white"></div>
 
-  <div id="legend" class="bg-white fixed top-0 left-0 pa3 mt2 ml2 br1 o-90" style="z-index: 999; width: 450px">
+  <div id="legend" class="bg-white fixed top-0 left-0 pa3 mt2 ml2 br1 o-90 top-z-index">
     <h1 class="f3 mt0">Hartford Crashes</h1>
 
     <p class="measure">
@@ -47,308 +53,72 @@
     </p>
 
     <form class="ph2">
-      <input type="text" class="js-range-slider" name="dates" value="" />
+      <label>
+        <input type="text" class="js-range-slider" name="dates" value="" />
+      </label>
 
       <p class="f6 measure" id="statsText"></p>
 
       <div id="filters" class="mt3 f6">
 
-        <h5 class="f5 mb1 mt3">Crash Participants</h5>
+        <h2 class="f5 mb1 mt3">Crash Participants</h5>
         <label>
-          <input type="checkbox" id="vehiclesOnly"> Vehicles only
+          <input type="checkbox" id="vehiclesOnly" /> Vehicles only
         </label>
 
         <label>
-          <input type="checkbox" id="pedestrians" class="ml2"> Pedestrians
+          <input type="checkbox" id="pedestrians" class="ml2" /> Pedestrians
         </label>
 
         <label>
-          <input type="checkbox" id="cyclists" class="ml2"> Cyclists
+          <input type="checkbox" id="cyclists" class="ml2" /> Cyclists
         </label>
 
-        <h5 class="f5 mb1 mt3">Injuries</h5>
+        <h2 class="f5 mb1 mt3">Injuries</h5>
         <label>
-          <input type="checkbox" id="propertyDamage"> Property damage
+          <input type="checkbox" id="propertyDamage" /> Property damage
         </label>
         <label>
-          <input type="checkbox" id="injury" class="ml2"> Injury
+          <input type="checkbox" id="injury" class="ml2" /> Injury
         </label>
         <label>
-          <input type="checkbox" id="fatal" class="ml2"> Fatal
-        </label>
-
-        <h5 class="f5 mb1 mt3">Roads</h5>
-        <label>
-          <input type="checkbox" id="local"> Local
-        </label>
-        <label>
-          <input type="checkbox" id="highways" class="ml2"> Highways
+          <input type="checkbox" id="fatal" class="ml2" /> Fatal
         </label>
 
-
-        <h5 class="f5 mb1 mt3">Map Appearance</h5>
+        <h2 class="f5 mb1 mt3">Roads</h5>
         <label>
-          <input type="checkbox" id="labels" checked="checked"> Street labels
+          <input type="checkbox" id="local" /> Local
+        </label>
+        <label>
+          <input type="checkbox" id="highways" class="ml2" /> Highways
+        </label>
+
+
+        <h2 class="f5 mb1 mt3">Map Appearance</h5>
+        <label>
+          <input type="checkbox" id="labels" checked="checked" /> Street labels
         </label>
         <label class="ml4">
-          Intensity <input type="range" value="10" min="1" max="30" id="intensity" class="v-mid mr2">
+          Intensity <input type="range" value="10" min="1" max="30" id="intensity" class="v-mid mr2" />
         </label>
 
       </div>
 
     </form>
 
-
   </div>
 
+  <script src="./script.js"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-153586697-2"></script>
   <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-    var map = L.map('map', {
-      zoomControl: false,
-      center: [41.763, -72.675],
-      zoom: 15,
-      minZoom: 12,
-      attributionControl: false,
-      preferCanvas: true
-    })
-
-    L.control.zoom({position: 'topright'}).addTo(map)
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(map)
-
-    var labels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19,
-      pane: 'shadowPane'  // always display on top
-    }).addTo(map)
-
-    function dateToTS(date) {
-      return date.valueOf();
-    }
-    
-    function tsToDate(ts) {
-      var d = new Date(ts);
-  
-      return d.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    }
-
-    var initFrom = dateToTS( new Date(2020, 0, 1) );
-    var initTo = dateToTS( new Date(2020, 7, 31) );
-
-    Papa.parse('./data/crashes.csv', {
-      download: true,
-      header: true,
-      dynamicTyping: true,
-      complete: function(result) {
-
-        var data = result.data;
-
-        var heat = L.heatLayer( [], { radius: 20 } ).addTo(map);
-        var individualPoints = L.layerGroup().addTo(map);
-
-        var tsCoef = 100000.0 // original timestamp needs to be multiplied by this to work in JS
-
-        var updateStatsText = function(formattedFrom, formattedTo, crashesTotal, crashesPed, crashesCyc, filtered) {
-          var text = formattedFrom === formattedTo
-            ? ('On ' + formattedFrom)
-            : ('From ' + formattedFrom + ' to ' + formattedTo)
-
-          text += ', there ' + (crashesTotal === 1 ? 'was ' : 'were ') + (crashesTotal === 0 ? 'no' : crashesTotal.toLocaleString())
-          text += ' car crash' + (crashesTotal === 1 ? '' : 'es') + ' in Hartford.'
-
-          if (crashesTotal > 1) {
-            text += ' Of those, ' + (crashesPed > 0 ? crashesPed.toLocaleString() : ' none');
-            text += ' involved a pedestrian, and ';
-            text += (crashesCyc > 0 ? crashesCyc.toLocaleString() : ' none');
-            text += ' involved a cyclist.';
-          }
-
-          text += ' <span class="i ' + (filtered ? '' : 'red') + '">'
-            + (filtered ? filtered.toLocaleString() : 'No ') + ' crash'
-            + (filtered === 1 ? '' : 'es') + ' satisf' + (filtered === 1 ? 'ies' : 'y')
-            + ' your filtering criteria.</span>'
-
-          $('#statsText').html(text)
-
-        }
-
-        // Given `from` and `to` timestamps, updates the heatmap layer.
-        var updateHeatLayer = function(from, to) {
-
-          from = dateToTS( new Date(from * 1).setHours(0,0,0,0)) / tsCoef;
-          to = dateToTS( new Date(to * 1).setHours(23,59,59,0)) / tsCoef;
-
-          // All crashes between set dates
-          var crashes = data.filter(function(point) {
-            return point.d >= from && point.d <= to;
-          })
-
-          var crashesFiltered = crashes.filter(function(point) {
-            return (( $('#local').prop('checked') ? point.r !== 1 : false)
-              || ( $('#highways').prop('checked') ? point.r === 1 : false))
-
-              && (( $('#vehiclesOnly').prop('checked') ? (point.c === 0 && point.p === 0) : false)
-              || ( $('#cyclists').prop('checked') ? point.c === 1 : false)
-              || ( $('#pedestrians').prop('checked') ? point.p === 1 : false))
-
-              && (( $('#propertyDamage').prop('checked') ? point.s === 'O' : false)
-              || ( $('#injury').prop('checked') ? point.s === 'A' : false)
-              || ( $('#fatal').prop('checked') ? point.s === 'K' : false))
-          });
-
-          updateStatsText(
-            tsToDate(from * 100000),  // Date from
-            tsToDate(to * 100000),  // Date to
-            crashes.length, // Total crashes
-            crashes.filter(function(p) {return p.p === 1}).length,  // Ped crashes
-            crashes.filter(function(p) {return p.c === 1}).length,  // Cyc crashes
-            crashesFiltered.length
-          )
-
-          // Despite zoom, clear individual points
-          individualPoints.clearLayers();
-
-          // Update the heatlayer
-          var intensity = $('#intensity').val();
-
-          // If zoomed in all the way, show points instead of a heatmap
-          if ( map.getZoom() >= 18 ) {
-
-            heat.setLatLngs([]);
-
-            crashesFiltered.map(function(crash) {
-              var diagramUrl = 'https://www.ctcrash.uconn.edu/MMUCCDiagram?id=' + crash.id + '&asImage=true'
-
-              var circle = L.circleMarker([crash.x, crash.y], {
-                radius: 5,
-                color: '#002147',
-                fillColor: '#002147',
-                fillOpacity: 0.8,
-                opacity: 0.8,
-                weight: 0,
-              }).bindPopup(
-                '<b>Crash ID ' + crash.id + '</b><br>'
-                  + tsToDate(crash.d * tsCoef) + ' at ' + crash.t
-                  + '<a href="' + diagramUrl + '" target="_blank"><img src="' + diagramUrl + '" alt="Crash diagram"></a>'
-                  + '<br>Severity: ' + (crash.s === 'K' ? 'Fatal crash' : crash.s === 'A' ? 'Injury of any type' : 'Property damage only'),
-                { minWidth: 300 }
-              )
-              
-              individualPoints.addLayer(circle);
-            })
-
-          }
-
-          // Zoomed out enough for a heatmap
-          else {
-            heat.setLatLngs(
-              crashesFiltered.map(function(point) {
-                return [point.x, point.y, intensity / 3.0];
-              })
-            )
-          }
-
-        }
-
-        // Initialize Ion range slider
-        var slider = $(".js-range-slider").ionRangeSlider({
-          type: 'double',
-
-          min: dateToTS(new Date(2015, 0, 1)),
-          max: dateToTS(new Date(2020, 7, 31)),
-
-          from: initFrom,
-          to: initTo,
-          
-          prettify: tsToDate,
-          grid: true,
-          grid_num: 4,
-
-          onChange: function(sliderData) {
-            updateHeatLayer(sliderData.from, sliderData.to);
-          }
-        });
-
-
-        // Re-draw heat layer when any filter (apart from street labels)
-        // is changed
-        $('#filters input').not('#labels').change(function(e) {
-          updateHeatLayer(
-            slider[0].value.split(';')[0],
-            slider[0].value.split(';')[1]
-          )
-        })
-
-
-        // Toggle street/town labels
-        $('#labels').change(function(e) {
-          if ( $('#labels').prop('checked') ) {
-            labels.addTo(map);
-          } else {
-            map.removeLayer(labels);
-          }
-        })
-
-        map.on('zoomend', function() {
-          updateHeatLayer(
-            slider[0].value.split(';')[0],
-            slider[0].value.split(';')[1]
-          )
-        })
-
-        // Set default properties
-        $('#filters input').prop('checked', 'checked');
-        $('#intensity').val(5);
-        updateHeatLayer( initFrom, initTo );
-
-      }
-    })
-
-    L.control.attribution({
-      prefix: 'View <a href="https://github.com/Picturedigits/hartford-crashes">code on GitHub</a> \
-        by Picturedigits for <a href="https://www.ctprf.org/programs_services/transport-hartford/" target="_blank">TransportHartford</a>'
-    }).addTo(map)
-
+    gtag('config', 'UA-153586697-2');
   </script>
 
-  <style>
-    .leaflet-control-zoom {
-      border: 0 !important;
-    }
-
-    .leaflet-control-zoom-in {
-      border-bottom: 0 !important;
-    }
-
-    .irs-bar, .irs-handle i, .irs-single, .irs-from, .irs-to {
-      background-color: #111 !important;
-    }
-
-    .irs-single::before, .irs-from::before, .irs-to::before {
-      border-top-color: #111 !important;
-    }
-  </style>
-
 </body>
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-153586697-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-153586697-2');
-</script>
-
 
 </html>

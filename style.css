@@ -1,0 +1,29 @@
+.leaflet-control-zoom {
+    border: 0 !important;
+}
+
+.leaflet-control-zoom-in {
+    border-bottom: 0 !important;
+}
+
+.irs-bar,
+.irs-handle i,
+.irs-single,
+.irs-from,
+.irs-to {
+    background-color: #111 !important;
+}
+
+.irs-single::before,
+.irs-from::before,
+.irs-to::before {
+    border-top-color: #111 !important;
+}
+
+.top-z-index {
+    z-index: 999;
+}
+
+#legend {
+    width: 450px;
+}
