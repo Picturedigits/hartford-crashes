@@ -4,6 +4,8 @@ Interactive heatmap of car crashes in Hartford between 2015 and 2020 which
 displays pre-processed data from [UConn Crash Data Repository](https://www.ctcrash.uconn.edu/).
 It can be adapted for other towns in Connecticut, or other states that have similar data.
 
+*🎊 A new version of this map is available for [Hartford](https://datavizforall.org/hartford-crashes/) (via [datavizforall.org](https://datavizforall.org/)) and [West Hartford](https://bikewesthartford.github.io/wh-crashes/) (via [bikewesthartford.org](https://bikewesthartford.org/)).*
+
 ![Heatmap gif](./img/demo.gif)
 
 ## Pre-process data
